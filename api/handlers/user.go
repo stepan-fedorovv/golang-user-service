@@ -67,3 +67,9 @@ func LoginHandler(log *slog.Logger, s *db.Storage, jwtSecretKey []byte) http.Han
 		}
 	}
 }
+
+func MeHandler(w http.ResponseWriter, r *http.Request) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+	}
+}

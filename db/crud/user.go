@@ -27,7 +27,7 @@ func CreateUser(body schemas.UserRegisterSchema, s *db.Storage) (schemas.UserRes
 	return user, nil
 }
 
-func SelectUser(username string, s *db.Storage) (models.User, error) {
+func SelectUserByUsername(username string, s *db.Storage) (models.User, error) {
 	var user models.User
 	stmt := `
 			SELECT 
@@ -41,6 +41,37 @@ func SelectUser(username string, s *db.Storage) (models.User, error) {
 			    "updated_at"
 			FROM users WHERE username = $1`
 	err := s.DB.QueryRow(context.Background(), stmt, username).Scan(
+		&user.ID,
+		&user.Username,
+		&user.Password,
+		&user.Email,
+		&user.Name,
+		&user.Surname,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if errors.As(err, &sql.ErrNoRows) {
+		return models.User{}, nil
+	} else if err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}
+
+func SelectUserById(id int, s *db.Storage) (models.User, error) {
+	var user models.User
+	stmt := `
+			SELECT 
+			    "id",
+			    "username",
+			    "password",
+			    "email",
+			    "name",
+			    "surname",
+			    "created_at",
+			    "updated_at"
+			FROM users WHERE id = $1`
+	err := s.DB.QueryRow(context.Background(), stmt, id).Scan(
 		&user.ID,
 		&user.Username,
 		&user.Password,

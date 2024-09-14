@@ -17,6 +17,7 @@ func main() {
 	storage, err := db.New(cfg.StoragePath)
 	_ = storage
 	if err != nil {
+		log.Error(err.Error())
 		log.Error("Error opening storage")
 		os.Exit(1)
 	}

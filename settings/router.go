@@ -19,6 +19,7 @@ func API(storage *db.Storage, log *slog.Logger, jwtSecretKey []byte) chi.Router 
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/register/", handlers.RegisterHandler(log, storage, jwtSecretKey))
 		r.Post("/login/", handlers.LoginHandler(log, storage, jwtSecretKey))
+		r.With(JwtAuthMiddleware(jwtSecretKey, storage)).Get()
 	})
 	return r
 }

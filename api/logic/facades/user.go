@@ -15,7 +15,7 @@ import (
 func UserRegister(
 	body schemas.UserRegisterSchema, s *db.Storage, jwtSecretKey []byte,
 ) (schemas.JWTResponseSchema, error) {
-	if _, err := crud.SelectUser(body.Username, s); err != nil {
+	if _, err := crud.SelectUserByUsername(body.Username, s); err != nil {
 		return schemas.JWTResponseSchema{}, errors.New("user Already Exists")
 	}
 	user, err := crud.CreateUser(body, s)
@@ -36,7 +36,7 @@ func UserRegister(
 func UserLogin(
 	body models.User, s *db.Storage, jwtSecretKey []byte,
 ) (schemas.JWTResponseSchema, error) {
-	user, err := crud.SelectUser(*body.Username, s)
+	user, err := crud.SelectUserByUsername(*body.Username, s)
 	if user.Username == nil {
 		return schemas.JWTResponseSchema{}, errors.New("user Not found")
 	}
