@@ -1,0 +1,14 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="GoDfaErrorMayBeNotNil" enabled="true" level="WARNING" enabled_by_default="true">
+      <functions>
+        <function importPath="app/db/crud" name="SelectUser" />
+      </functions>
+      <methods>
+        <method importPath="app/db/crud" receiver="Create" name="CreateUser" />
+        <method importPath="app/api/logic/facades" receiver="Create" name="CreateUser" />
+      </methods>
+    </inspection_tool>
+  </profile>
+</component>

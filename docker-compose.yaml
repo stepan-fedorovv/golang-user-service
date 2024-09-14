@@ -1,0 +1,15 @@
+version: '3.10'
+services:
+  postgres_db:
+    container_name: go_practice
+    image: postgres:16.0-alpine
+    volumes:
+      - go_practice_data:/var/lib/postgresql/go_practice_postgres_data/
+    environment:
+      - POSTGRES_DB=go_practice
+      - POSTGRES_USER=go_practice
+      - POSTGRES_PASSWORD=go_practice
+    ports:
+      - "5433:5432"
+volumes:
+  go_practice_data:
