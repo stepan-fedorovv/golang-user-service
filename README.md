@@ -1,4 +1,4 @@
-# Golang user servise
+# Base HTTP user serives
 
 
 ## Technologies:
