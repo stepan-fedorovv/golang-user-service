@@ -1,6 +1,8 @@
 package settings
 
 import (
+	"fmt"
+	"github.com/go-ldap/ldap"
 	"github.com/ilyakaznacheev/cleanenv"
 	"log"
 	"log/slog"
@@ -18,12 +20,20 @@ type Config struct {
 	StoragePath string `yaml:"storage_path" env:"storage_path" env-required:"true"`
 	SecretKey   string `yaml:"secret_key" env:"secret_key" env-required:"true"`
 	HTTPServer  `yaml:"http_server"`
+	LDAP        `yaml:"ldap"`
 }
 
 type HTTPServer struct {
 	Address     string        `yaml:"address" env:"address" env-default:"localhost:8080"`
 	Timeout     time.Duration `yaml:"timeout" env:"timeout" env-default:"4s"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env:"idle_timeout" env-default:"60s"`
+}
+
+type LDAP struct {
+	BindDN       string `yaml:"bind_dn" env:"bind_dn" env-required:"true"`
+	BindPassword string `yaml:"bind_password" env:"bind_password" env-required:"true"`
+	LdapHost     string `yaml:"ldap_host" env:"ldap_host" env-required:"true"`
+	LdapPort     int    `yaml:"ldap_port" env:"ldap_port" env-required:"true"`
 }
 
 func MustLoad() *Config {
@@ -58,4 +68,16 @@ func SetupLogger(env string) *slog.Logger {
 	)
 
 	return initLog
+}
+
+func Connect(cfg *Config) (*ldap.Conn, error) {
+
+	conn, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", cfg.LdapHost, cfg.LdapPort))
+	if err != nil {
+		return nil, err
+	}
+	if err := conn.Bind(cfg.BindDN, cfg.BindPassword); err != nil {
+		return nil, err
+	}
+	return conn, nil
 }

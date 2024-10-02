@@ -12,6 +12,11 @@ import (
 func main() {
 	cfg := settings.MustLoad()
 	log := settings.SetupLogger(cfg.Env)
+	conn, err := settings.Connect(cfg)
+	if err != nil {
+		log.Error("Error connection to ldap: " + err.Error())
+		os.Exit(1)
+	}
 	log.Info("Starting application")
 	log.Debug("Debug mode is active now")
 	storage, err := db.New(cfg.StoragePath)
@@ -21,7 +26,7 @@ func main() {
 		log.Error("Error opening storage")
 		os.Exit(1)
 	}
-	router := settings.Router(storage, log, cfg)
+	router := settings.Router(storage, log, cfg, conn)
 	srv := &http.Server{
 		Addr:              cfg.Address,
 		Handler:           router,
