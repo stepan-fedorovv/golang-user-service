@@ -30,6 +30,7 @@ type HTTPServer struct {
 }
 
 type LDAP struct {
+	BaseDN       string `yaml:"base_dn" env:"base_dn" env-required:"true"`
 	BindDN       string `yaml:"bind_dn" env:"bind_dn" env-required:"true"`
 	BindPassword string `yaml:"bind_password" env:"bind_password" env-required:"true"`
 	LdapHost     string `yaml:"ldap_host" env:"ldap_host" env-required:"true"`

@@ -20,7 +20,7 @@ type Response struct {
 	Data       schemas.JWTResponseSchema `json:"data"`
 }
 
-func LoginHandler(log *slog.Logger, s *db.Storage, jwtSecretKey []byte, conn *ldap.Conn) http.HandlerFunc {
+func LoginHandler(log *slog.Logger, s *db.Storage, jwtSecretKey []byte, conn *ldap.Conn, baseDN string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var user models.User
 		validate := validator.New()
@@ -32,7 +32,7 @@ func LoginHandler(log *slog.Logger, s *db.Storage, jwtSecretKey []byte, conn *ld
 			http.Error(w, "Ошибка в теле запроса: "+err.Error(), http.StatusTeapot)
 			return
 		}
-		user, err := facades.LDAPAuth(conn, user, s)
+		user, err := facades.LDAPAuth(conn, user, s, baseDN)
 		if err != nil {
 			http.Error(w, "Ошибка в авторизации пользователя: "+err.Error(), http.StatusTeapot)
 		}

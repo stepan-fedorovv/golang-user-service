@@ -89,9 +89,9 @@ func UserPartialUpdate(user schemas.UserResponseSchema, s *db.Storage, id int) (
 	return updatedUser, nil
 }
 
-func LDAPAuth(conn *ldap.Conn, user models.User, s *db.Storage) (models.User, error) {
+func LDAPAuth(conn *ldap.Conn, user models.User, s *db.Storage, baseDN string) (models.User, error) {
 	searchRequest := ldap.NewSearchRequest(
-		"DC=mts,DC=local",
+		baseDN,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		fmt.Sprintf("(sAMAccountName=%s)", *user.Username),
 		[]string{"dn", "cn", "sAMAccountName", "givenName", "description"},
