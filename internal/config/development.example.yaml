@@ -1,0 +1,14 @@
+env: "development"
+storage_path:
+secret_key:
+http_server:
+  address: "localhost:8080"
+  timeout: 4s
+  idle_timeout: 60s
+ldap:
+  base_dn:
+  bind_dn:
+  bind_password:
+  ldap_host:
+  ldap_port:
+  groupDN:
