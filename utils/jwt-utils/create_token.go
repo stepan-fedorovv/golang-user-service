@@ -1,8 +1,8 @@
 package jwt_utils
 
 import (
-	"app/api/schemas"
-	"app/db/models"
+	"app/internal/api/schemas"
+	"app/internal/db/models"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )

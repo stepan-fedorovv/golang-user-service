@@ -1,8 +1,8 @@
 package main
 
 import (
-	"app/db"
-	"app/settings"
+	"app/internal/db"
+	settings2 "app/internal/settings"
 	"app/utils/logger"
 	"errors"
 	"net/http"
@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-	cfg := settings.MustLoad()
-	log := settings.SetupLogger(cfg.Env)
-	conn, err := settings.Connect(cfg)
+	cfg := settings2.MustLoad()
+	log := settings2.SetupLogger(cfg.Env)
+	conn, err := settings2.Connect(cfg)
 	if err != nil {
 		log.Error("Error connection to ldap: " + err.Error())
 		os.Exit(1)
@@ -26,7 +26,7 @@ func main() {
 		log.Error("Error opening storage")
 		os.Exit(1)
 	}
-	router := settings.Router(storage, log, cfg, conn)
+	router := settings2.Router(storage, log, cfg, conn)
 	srv := &http.Server{
 		Addr:              cfg.Address,
 		Handler:           router,
