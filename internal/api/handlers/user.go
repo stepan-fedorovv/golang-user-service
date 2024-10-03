@@ -25,23 +25,28 @@ func LoginHandler(log *slog.Logger, s *db.Storage, jwtSecretKey []byte, conn *ld
 		var user models.User
 		validate := validator.New()
 		if err := http_utils.DecodeBody(r, &user); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в валидации JSON: "+err.Error(), http.StatusTeapot)
 			return
 		}
 		if err := validate.Struct(user); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в теле запроса: "+err.Error(), http.StatusTeapot)
 			return
 		}
 		user, err := facades.LDAPAuth(conn, user, s, baseDN)
 		if err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в авторизации пользователя: "+err.Error(), http.StatusTeapot)
 		}
 		token, err := facades.UserLogin(user, s, jwtSecretKey)
 		if err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в регистрации пользователя: "+err.Error(), http.StatusTeapot)
 			return
 		}
-		if err := http_utils.EncodeBody(w, token); err != nil {
+		if err = http_utils.EncodeBody(w, token); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в формировании ответа: "+err.Error(), http.StatusTeapot)
 			return
 		}
@@ -54,19 +59,23 @@ func RefreshHandler(log *slog.Logger, s *db.Storage, jwtSecretKey []byte) http.H
 		validate := validator.New()
 
 		if err := http_utils.DecodeBody(r, &user); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в валидации JSON: "+err.Error(), http.StatusTeapot)
 			return
 		}
 		if err := validate.Struct(user); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в теле запроса: "+err.Error(), http.StatusTeapot)
 			return
 		}
 		tokens, err := facades.Refresh(user, s, jwtSecretKey)
 		if err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в обновлении токена: "+err.Error(), http.StatusTeapot)
 			return
 		}
 		if err := http_utils.EncodeBody(w, tokens); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в формировании ответа: "+err.Error(), http.StatusTeapot)
 			return
 		}
@@ -78,11 +87,13 @@ func MeHandler(log *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, ok := r.Context().Value("user").(models.User)
 		if !ok {
+			log.Error("Unauthorized")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 		userResponse := facades.ConvertToResponse(user)
 		if err := http_utils.EncodeBody(w, userResponse); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в формировании ответа: "+err.Error(), http.StatusTeapot)
 		}
 	}
@@ -92,6 +103,7 @@ func PartialUpdateHandler(log *slog.Logger, s *db.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var user schemas.UserResponseSchema
 		if err := http_utils.DecodeBody(r, &user); err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Ошибка в валидации JSON: "+err.Error(), http.StatusTeapot)
 			return
 		}
@@ -99,6 +111,7 @@ func PartialUpdateHandler(log *slog.Logger, s *db.Storage) http.HandlerFunc {
 		urlParam := chi.URLParam(r, "id")
 		id, err := strconv.Atoi(urlParam)
 		if err != nil {
+			log.Error(err.Error())
 			http.Error(w, "Некорректный id"+err.Error(), http.StatusTeapot)
 			return
 		}
